@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Create Account{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>Create Account</h2>
+        <p class="page-subtitle">Open a new member account</p>
+    </div>
+    <button type="button" class="btn-secondary no-print" onclick="window.history.back()">Back</button>
+</div>
+
+<div class="card">
+    <h3>New Member Details</h3>
+    <form method="post" class="form-grid">
+        <div class="form-row">
+            <label>Account No
+                <input type="text"
+                       name="account_no"
+                       value="{{ default_account_no }}"
+                       readonly>
+            </label>
+            <label>Name
+                <input type="text" name="name" required>
+            </label>
+        </div>
+
+        <div class="form-row">
+            <label>Date of Birth
+                <input type="date" name="dob">
+            </label>
+            <label>Mobile
+                <input type="text" name="mobile" maxlength="10" placeholder="10 digit mobile">
+            </label>
+        </div>
+
+        <div class="form-row">
+            <label>Aadhar No
+                <input type="text" name="aadhar" maxlength="12" placeholder="12 digit Aadhar">
+            </label>
+            <label>PAN
+                <input type="text" name="pan" maxlength="10" placeholder="ABCDE1234F">
+            </label>
+        </div>
+
+        <div class="form-row">
+            <label>Address
+                <textarea name="address" rows="2"></textarea>
+            </label>
+        </div>
+
+        <div class="form-row">
+            <label>Opening Date
+                <input type="date" name="opening_date" value="{{ now.date() }}">
+            </label>
+            <label>Opening Balance (₹)
+                <input type="number" step="0.01" name="opening_balance" value="0.00">
+            </label>
+        </div>
+
+        <div class="form-actions">
+            <!-- ONLY Save + Clear now -->
+            <button type="submit" class="btn-primary">Save Account</button>
+            <button type="reset" class="btn-secondary">Clear</button>
+        </div>
+    </form>
+</div>
+
+<p class="muted">
+    Note: To <strong>search / edit / delete</strong> existing members,
+    use the <strong>Member</strong> menu.
+</p>
+{% endblock %}

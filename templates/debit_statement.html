@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}Debit Statement{% endblock %}
+
+{% block content %}
+<div class="page-header no-print">
+    <div>
+        <h2>Debit Statement</h2>
+        <p class="page-subtitle">Money out transactions (Debit section only)</p>
+    </div>
+    <a href="{{ url_for('debit') }}" class="btn-secondary">Back</a>
+</div>
+
+<div class="page-tools no-print">
+    <form method="get"
+          action="{{ url_for('debit_statement') }}"
+          class="form-grid"
+          style="max-width: 520px;">
+        <div class="form-row">
+            <label>From Date
+                <input type="date" name="from_date"
+                       value="{{ from_date.isoformat() if from_date else '' }}">
+            </label>
+            <label>To Date
+                <input type="date" name="to_date"
+                       value="{{ to_date.isoformat() if to_date else '' }}">
+            </label>
+        </div>
+        <div class="form-row">
+            <label>Debit Head
+                <select name="debit_type">
+                    <option value="">All</option>
+                    {% for t in debit_types %}
+                        <option value="{{ t }}" {% if t == selected_debit_type %}selected{% endif %}>{{ t }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">Filter</button>
+            <button type="button" class="btn-secondary" onclick="window.print()">Print</button>
+        </div>
+    </form>
+</div>
+
+<div class="content-print-wrapper">
+    {% include "partials/print_header.html" %}
+
+    <div class="card table-card">
+        <h3>Debit Transactions</h3>
+        {% if debits %}
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Debit Head</th>
+                        <th>Account No</th>
+                        <th>Name</th>
+                        <th>Amount (₹)</th>
+                        <th>Mode</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for d in debits %}
+                    <tr>
+                        <td>{{ d.date.strftime('%d-%m-%Y') if d.date else '' }}</td>
+                        <td>{{ d.debit_type }}</td>
+                        <td>{{ d.account_no or '-' }}</td>
+                        <td>{{ d.name or '-' }}</td>
+                        <td class="amount-debit">{{ '%.2f'|format(d.amount) }}</td>
+                        <td>{{ d.mode or '-' }}</td>
+                        <td>{{ d.remarks or '-' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr class="total-row">
+                        <th colspan="4">Total Debit</th>
+                        <th>₹ {{ '%.2f'|format(total_amount or 0) }}</th>
+                        <th colspan="2"></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        {% else %}
+        <p class="muted">No debit transactions found for selected filters.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

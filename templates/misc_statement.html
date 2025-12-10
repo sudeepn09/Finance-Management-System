@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Miscellaneous Statement{% endblock %}
+
+{% block content %}
+<div class="page-header no-print">
+    <div>
+        <h2>Miscellaneous Expenses Statement</h2>
+        <p class="page-subtitle">Operational expenses (Misc section only)</p>
+    </div>
+    <a href="{{ url_for('misc') }}" class="btn-secondary">Back</a>
+</div>
+
+<div class="page-tools no-print">
+    <form method="get"
+          action="{{ url_for('misc_statement') }}"
+          class="form-grid"
+          style="max-width: 520px;">
+        <div class="form-row">
+            <label>From Date
+                <input type="date" name="from_date"
+                       value="{{ from_date.isoformat() if from_date else '' }}">
+            </label>
+            <label>To Date
+                <input type="date" name="to_date"
+                       value="{{ to_date.isoformat() if to_date else '' }}">
+            </label>
+        </div>
+        <div class="form-row">
+            <label>Expense Head
+                <select name="head">
+                    <option value="">All</option>
+                    {% for h in heads %}
+                        <option value="{{ h }}" {% if h == selected_head %}selected{% endif %}>{{ h }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">Filter</button>
+            <button type="button" class="btn-secondary" onclick="window.print()">Print</button>
+        </div>
+    </form>
+</div>
+
+<div class="content-print-wrapper">
+    {% include "partials/print_header.html" %}
+
+    <div class="card table-card">
+        <h3>Miscellaneous Expenses</h3>
+        {% if expenses %}
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Head</th>
+                        <th>Amount (₹)</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for m in expenses %}
+                    <tr>
+                        <td>{{ m.date.strftime('%d-%m-%Y') if m.date else '' }}</td>
+                        <td>{{ m.head }}</td>
+                        <td>{{ '%.2f'|format(m.amount) }}</td>
+                        <td>{{ m.remarks or '-' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr class="total-row">
+                        <th colspan="2">Total Expenses</th>
+                        <th>₹ {{ '%.2f'|format(total_amount or 0) }}</th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        {% else %}
+        <p class="muted">No expenses found for selected filters.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}RD Statement{% endblock %}
+
+{% block content %}
+<div class="page-header no-print">
+    <div>
+        <h2>Recurring Deposit Statement</h2>
+        <p class="page-subtitle">RD opened from RD section</p>
+    </div>
+    <a href="{{ url_for('rd') }}" class="btn-secondary">Back</a>
+</div>
+
+<div class="page-tools no-print">
+    <form method="get"
+          action="{{ url_for('rd_statement') }}"
+          class="form-grid"
+          style="max-width: 620px;">
+        <div class="form-row">
+            <label>From Start Date
+                <input type="date" name="from_date"
+                       value="{{ from_date.isoformat() if from_date else '' }}">
+            </label>
+            <label>To Start Date
+                <input type="date" name="to_date"
+                       value="{{ to_date.isoformat() if to_date else '' }}">
+            </label>
+        </div>
+        <div class="form-row">
+            <label>Status
+                <select name="status">
+                    <option value="">All</option>
+                    <option value="open" {% if status_filter == 'open' %}selected{% endif %}>Open</option>
+                    <option value="closed" {% if status_filter == 'closed' %}selected{% endif %}>Closed</option>
+                </select>
+            </label>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">Filter</button>
+            <button type="button" class="btn-secondary" onclick="window.print()">Print</button>
+        </div>
+    </form>
+</div>
+
+<div class="content-print-wrapper">
+    {% include "partials/print_header.html" %}
+
+    <div class="card table-card">
+        <h3>RD Summary</h3>
+        {% if rds %}
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Start Date</th>
+                        <th>Account No</th>
+                        <th>Name</th>
+                        <th>Monthly Installment (₹)</th>
+                        <th>Period (Months)</th>
+                        <th>Maturity Date</th>
+                        <th>Maturity Amount (₹)</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in rds %}
+                    <tr>
+                        <td>{{ r.start_date.strftime('%d-%m-%Y') if r.start_date else '' }}</td>
+                        <td>{{ r.account_no }}</td>
+                        <td>{{ r.member_name }}</td>
+                        <td>{{ '%.2f'|format(r.installment_amount) }}</td>
+                        <td>{{ r.period_months }}</td>
+                        <td>{{ r.maturity_date.strftime('%d-%m-%Y') if r.maturity_date else '' }}</td>
+                        <td>{{ '%.2f'|format(r.maturity_amount) }}</td>
+                        <td>{{ 'Closed' if r.is_closed else 'Open' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr class="total-row">
+                        <th colspan="3">Total Expected Principal</th>
+                        <th>₹ {{ '%.2f'|format(total_principal or 0) }}</th>
+                        <th colspan="4">Total RDs: {{ rds|length }}</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        {% else %}
+        <p class="muted">No RDs found for selected filters.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

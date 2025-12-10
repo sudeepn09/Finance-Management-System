@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Settings{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>Settings</h2>
+        <p class="page-subtitle">Fine-tune how you work with Shri Guru Finance back-office</p>
+    </div>
+    <button type="button" class="btn-secondary" onclick="window.history.back()">Back</button>
+</div>
+
+<div class="settings-sections">
+    <div class="card settings-quick-actions">
+        <h3>Preferences</h3>
+        <p class="muted">Select what you would like to configure:</p>
+        <div class="settings-actions-row">
+            <button type="button" class="settings-action-btn settings-nav-btn" data-target="settings-security">
+                <span class="settings-action-icon">🔒</span>
+                <span class="settings-action-text">
+                    <span class="settings-action-title">Change Password</span>
+                    <span class="settings-action-subtitle">Update your login credentials</span>
+                </span>
+            </button>
+            <button type="button" class="settings-action-btn settings-nav-btn" data-target="settings-appearance">
+                <span class="settings-action-icon">🎨</span>
+                <span class="settings-action-text">
+                    <span class="settings-action-title">Change Theme</span>
+                    <span class="settings-action-subtitle">Switch between light and dark modes</span>
+                </span>
+            </button>
+        </div>
+    </div>
+
+    <form method="post" class="card form-grid settings-section-card collapsed" id="settings-security">
+        <h3>
+            <button type="button" class="settings-toggle">
+                Change Password (Account &amp; Security)
+            </button>
+        </h3>
+        <p class="muted">
+            Protect access to the staff portal. Use a strong password that only authorised staff know.
+        </p>
+        <input type="hidden" name="section" value="password">
+        <div class="form-row">
+            <label>Old Password
+                <input type="password" name="old_password" required>
+            </label>
+        </div>
+        <div class="form-row">
+            <label>New Password
+                <input type="password" name="new_password" required>
+            </label>
+            <label>Confirm New Password
+                <input type="password" name="confirm_password" required>
+            </label>
+        </div>
+        <p class="muted">
+            Recommended: minimum 8 characters, mixing uppercase, lowercase, numbers, and symbols.
+        </p>
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">Update Password</button>
+        </div>
+    </form>
+
+    <div class="card settings-section-card collapsed" id="settings-appearance">
+        <h3>
+            <button type="button" class="settings-toggle">
+                Change Theme (Interface &amp; Theme)
+            </button>
+        </h3>
+        <p class="muted">
+            Adjust the visual style of the application to suit your environment and comfort.
+        </p>
+        <p>
+            Use the sun / moon toggle in the header to switch between <strong>Light</strong> and
+            <strong>Dark</strong> modes. Your choice is remembered locally in this browser.
+        </p>
+        <p class="muted">
+            Future options such as system-based theme and per-user theme profiles can be configured from here.
+        </p>
+    </div>
+
+</div>
+{% endblock %}
+
+

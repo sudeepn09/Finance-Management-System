@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}Loan Calculator{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const principal = document.getElementById('lc-principal');
+        const rate = document.getElementById('lc-rate');
+        const period = document.getElementById('lc-period');
+        const mode = document.getElementById('lc-mode');
+        const emiEl = document.getElementById('lc-emi');
+        const interestEl = document.getElementById('lc-interest');
+        const totalEl = document.getElementById('lc-total');
+
+        function recalc() {
+            const P = parseFloat(principal.value || '0');
+            const R = parseFloat(rate.value || '0');
+            const T = parseFloat(period.value || '0');
+
+            if (!P || !R || !T) {
+                emiEl.textContent = '—';
+                interestEl.textContent = '—';
+                totalEl.textContent = '—';
+                return;
+            }
+
+            const isWeekly = mode.value === 'weekly';
+            const n = isWeekly ? T : T; 
+            const r = (R / 100) / (isWeekly ? 52 : 12);
+
+            const emi = (P * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+            const totalPayable = emi * n;
+            const totalInterest = totalPayable - P;
+
+            emiEl.textContent = emi.toFixed(2);
+            interestEl.textContent = totalInterest.toFixed(2);
+            totalEl.textContent = totalPayable.toFixed(2);
+        }
+
+        [principal, rate, period, mode].forEach(el => {
+            el.addEventListener('input', recalc);
+            el.addEventListener('change', recalc);
+        });
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>Loan Calculator</h2>
+        <p class="page-subtitle">Instant EMI and interest estimates</p>
+    </div>
+    <button type="button" class="btn-secondary" onclick="window.history.back()">Back</button>
+</div>
+
+<div class="page-tools">
+    <button type="button" class="btn-secondary" onclick="window.print()">Print</button>
+</div>
+
+<div class="card loan-calculator-card">
+    <div class="form-grid">
+        <div class="form-row">
+            <label>Principal Amount
+                <input type="number" step="0.01" id="lc-principal" placeholder="Enter loan amount">
+            </label>
+            <label>Interest Rate (% per year)
+                <input type="number" step="0.01" id="lc-rate" placeholder="e.g. 18">
+            </label>
+        </div>
+
+        <div class="form-row">
+            <label>Period
+                <input type="number" id="lc-period" placeholder="Number of installments">
+            </label>
+            <label>Mode
+                <select id="lc-mode">
+                    <option value="monthly">Monthly</option>
+                    <option value="weekly">Weekly</option>
+                </select>
+            </label>
+        </div>
+    </div>
+
+    <div class="calculator-results">
+        <div class="result-item">
+            <span class="result-label">EMI Amount</span>
+            <span class="result-value">₹ <span id="lc-emi">—</span></span>
+        </div>
+        <div class="result-item">
+            <span class="result-label">Total Interest</span>
+            <span class="result-value">₹ <span id="lc-interest">—</span></span>
+        </div>
+        <div class="result-item">
+            <span class="result-label">Total Payable</span>
+            <span class="result-value">₹ <span id="lc-total">—</span></span>
+        </div>
+    </div>
+</div>
+{% endblock %}

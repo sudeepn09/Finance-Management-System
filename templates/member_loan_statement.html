@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% block title %}Member Loan Statement{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>Member Loan Statement</h2>
+        <p class="page-subtitle">
+            Loan Given + EMI / Interest / Fine history with available loan
+        </p>
+    </div>
+    <div class="no-print">
+        <button type="button" class="btn-secondary" onclick="window.history.back()">Back</button>
+        <button type="button" class="btn-primary" onclick="window.print()">Print</button>
+    </div>
+</div>
+
+<div class="card">
+    <h3>Loan Details</h3>
+    <div class="summary-row">
+        <div class="summary-card">
+            <div class="summary-label">Member Name</div>
+            <div class="summary-value">{{ loan.member_name }}</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-label">Account No</div>
+            <div class="summary-value">{{ loan.account_no }}</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-label">Loan ID</div>
+            <div class="summary-value">{{ loan.loan_id }}</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-label">Type</div>
+            <div class="summary-value">{{ loan.loan_type }}</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-label">Principal</div>
+            <div class="summary-value">₹ {{ '%.2f'|format(loan.principal) }}</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-label">Interest %</div>
+            <div class="summary-value">{{ '%.2f'|format(loan.interest_rate) }}</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-label">EMI Amount</div>
+            <div class="summary-value">₹ {{ '%.2f'|format(loan.emi_amount) }}</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-label">Installments</div>
+            <div class="summary-value">{{ loan.installments }}</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-label">Start Date</div>
+            <div class="summary-value">
+                {{ loan.start_date.strftime('%d-%m-%Y') if loan.start_date else '' }}
+            </div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-label">End Date</div>
+            <div class="summary-value">
+                {{ loan.end_date.strftime('%d-%m-%Y') if loan.end_date else '' }}
+            </div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-label">Available Loan (Outstanding)</div>
+            <div class="summary-value">
+                ₹ {{ '%.2f'|format(outstanding or 0.0) }}
+            </div>
+        </div>
+    </div>
+
+    <div class="summary-row" style="margin-top:12px;">
+        <div class="summary-card">
+            <div class="summary-label">Total EMI Received</div>
+            <div class="summary-value">₹ {{ '%.2f'|format(total_emi or 0.0) }}</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-label">Total Interest Received</div>
+            <div class="summary-value">₹ {{ '%.2f'|format(total_interest or 0.0) }}</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-label">Total Fine Received</div>
+            <div class="summary-value">₹ {{ '%.2f'|format(total_fine or 0.0) }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="card table-card">
+    <h3>Loan Transactions (with Available Loan)</h3>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Particulars</th>
+                    <th>Amount (₹)</th>
+                    <th>Available Loan (₹)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if rows %}
+                    {% for r in rows %}
+                    <tr>
+                        <td>{{ r.date.strftime('%d-%m-%Y') if r.date else '' }}</td>
+                        <td>{{ r.type }}</td>
+                        <td class="amount-credit">
+                            {{ '%.2f'|format(r.amount or 0.0) }}
+                        </td>
+                        <td>
+                            {{ '%.2f'|format(r.remaining or 0.0) }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="4" class="muted">
+                            No loan transactions found for this loan.
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

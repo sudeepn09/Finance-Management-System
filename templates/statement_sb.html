@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block title %}SB Statement - {{ member.account_no }}{% endblock %}
+
+{% block content %}
+<div class="page-header no-print">
+    <div>
+        <h2>SB Statement</h2>
+        <p class="page-subtitle">
+            Savings account statement for <strong>{{ member.name }}</strong>
+            (A/c: {{ member.account_no }})
+        </p>
+    </div>
+    <button type="button" class="btn-secondary" onclick="window.history.back()">Back</button>
+</div>
+
+<div class="page-tools no-print">
+    <button type="button" class="btn-secondary" onclick="window.print()">Print</button>
+</div>
+
+<div class="card account-details-card">
+    <!-- Bank / logo header for screen + print -->
+    <div class="print-header">
+        <div class="ph-left">
+            {% if bank_logo %}
+                <img src="{{ url_for('static', filename=bank_logo) }}" alt="Logo" class="ph-logo-img">
+            {% else %}
+                <span class="ph-logo">LOGO</span>
+            {% endif %}
+            <div class="ph-bank-lines">
+                <div class="ph-bank-name">Shri Guru Finance Corporation</div>
+                <div class="ph-branch">Bhainakwadi (Sadalga)</div>
+            </div>
+        </div>
+        <div class="ph-datetime">
+            {{ now.strftime('%d-%m-%Y  %I:%M %p') }}
+        </div>
+    </div>
+
+    <!-- Member / account info -->
+    <div class="form-row">
+        <label>Account No
+            <input type="text" value="{{ member.account_no }}" readonly>
+        </label>
+        <label>Name
+            <input type="text" value="{{ member.name }}" readonly>
+        </label>
+        <label>Mobile
+            <input type="text" value="{{ member.mobile or 'N/A' }}" readonly>
+        </label>
+        <label>Current Balance
+            <input type="text" value="₹ {{ '%.2f'|format(member.current_balance or 0) }}" readonly>
+        </label>
+    </div>
+</div>
+
+<div class="card">
+    <h3>SB Transaction History</h3>
+
+    {% if transactions %}
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Credit</th>
+                    <th>Debit</th>
+                    <th>Available Balance</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tx in transactions %}
+                <tr>
+                    <td>{{ tx.date.strftime('%d-%m-%Y') if tx.date else '' }}</td>
+                    <td class="txn-type {{ 'txn-credit' if tx.type == 'Credit' else 'txn-debit' }}">
+                        {{ tx.type }}
+                    </td>
+                    <td>₹ {{ '%.2f'|format(tx.amount) }}</td>
+                    <td class="amount-credit">
+                        {% if tx.credit > 0 %}₹ {{ '%.2f'|format(tx.credit) }}{% else %}-{% endif %}
+                    </td>
+                    <td class="amount-debit">
+                        {% if tx.debit > 0 %}₹ {{ '%.2f'|format(tx.debit) }}{% else %}-{% endif %}
+                    </td>
+                    <td>₹ {{ '%.2f'|format(tx.balance) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <p class="muted">No transactions found for this SB account.</p>
+    {% endif %}
+</div>
+
+<div class="card">
+    <h3>Summary</h3>
+    <div class="summary-row">
+        <div class="summary-card">
+            <span class="summary-label">Total Credit</span>
+            <span class="summary-value">₹ {{ '%.2f'|format(total_credit) }}</span>
+        </div>
+        <div class="summary-card">
+            <span class="summary-label">Total Debit</span>
+            <span class="summary-value">₹ {{ '%.2f'|format(total_debit) }}</span>
+        </div>
+        <div class="summary-card">
+            <span class="summary-label">Available Balance (calculated)</span>
+            <span class="summary-value">₹ {{ '%.2f'|format(final_balance) }}</span>
+        </div>
+    </div>
+</div>
+{% endblock %}

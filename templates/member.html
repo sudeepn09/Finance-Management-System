@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block title %}Member{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>Member</h2>
+        <p class="page-subtitle">Search member, view balances and loans</p>
+    </div>
+</div>
+
+<div class="card">
+    <h3>Search Member</h3>
+    <form method="post" class="form-grid">
+        <input type="hidden" name="action" value="search">
+        <div class="form-row">
+            <label>Search By
+                <select name="search_type">
+                    <option value="account_no">Account No</option>
+                    <option value="name">Name</option>
+                    <option value="mobile">Mobile</option>
+                </select>
+            </label>
+            <label>Search Text
+                <input type="text" name="query" required>
+            </label>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">Search</button>
+        </div>
+    </form>
+</div>
+
+{% if member %}
+<div class="split-grid">
+    <div class="card">
+        <h3>Member Details</h3>
+        <form method="post" class="form-grid">
+            <input type="hidden" name="action" value="update">
+            <div class="form-row">
+                <label>Account No
+                    <input type="text" name="account_no" value="{{ member.account_no }}" readonly>
+                </label>
+                <label>Name
+                    <input type="text" value="{{ member.name }}" readonly>
+                </label>
+                <label>DOB
+                    <input type="text" value="{{ member.dob.strftime('%d-%m-%Y') if member.dob else '' }}" readonly>
+                </label>
+            </div>
+            <div class="form-row">
+                <label>Mobile
+                    <input type="text" name="mobile" value="{{ member.mobile or '' }}">
+                </label>
+                <label>Aadhar
+                    <input type="text" value="{{ member.aadhar or '' }}" readonly>
+                </label>
+                <label>PAN
+                    <input type="text" value="{{ member.pan or '' }}" readonly>
+                </label>
+            </div>
+            <div class="form-row">
+                <label>Address
+                    <textarea name="address" rows="2">{{ member.address or '' }}</textarea>
+                </label>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn-secondary">Update Member</button>
+                <a href="{{ url_for('statement', account_no=member.account_no) }}" class="btn-secondary">SB Statement</a>
+            </div>
+        </form>
+    </div>
+
+    <div class="card">
+        <h3>Summary</h3>
+        <div class="summary-row">
+            <div class="summary-card">
+                <div class="summary-label">SB Balance</div>
+                <div class="summary-value">₹ {{ '%.2f'|format(summary.sb_balance) if summary.sb_balance is not none else '0.00' }}</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Total Loans</div>
+                <div class="summary-value">{{ summary.loan_count or 0 }}</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Available Loan (Outstanding)</div>
+                <div class="summary-value">₹ {{ '%.2f'|format(summary.loan_outstanding or 0) }}</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">FD Active</div>
+                <div class="summary-value">{{ summary.fd_count or 0 }}</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">RD Active</div>
+                <div class="summary-value">{{ summary.rd_count or 0 }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card table-card">
+    <h3>Member Loans</h3>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Loan ID</th>
+                    <th>Type</th>
+                    <th>Principal (₹)</th>
+                    <th>EMI (₹)</th>
+                    <th>Installments</th>
+                    <th>End Date</th>
+                    <th class="no-print">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if member_loans %}
+                    {% for l in member_loans %}
+                    <tr>
+                        <td>{{ l.date.strftime('%d-%m-%Y') if l.date else '' }}</td>
+                        <td>{{ l.loan_id }}</td>
+                        <td>{{ l.loan_type }}</td>
+                        <td>{{ '%.2f'|format(l.principal) }}</td>
+                        <td>{{ '%.2f'|format(l.emi_amount) }}</td>
+                        <td>{{ l.installments }}</td>
+                        <td>{{ l.end_date.strftime('%d-%m-%Y') if l.end_date else '' }}</td>
+                        <td class="no-print">
+                            <a href="{{ url_for('member_loan_statement', loan_id=l.loan_id) }}" class="btn-secondary btn-sm">
+                                View Statement
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="8" class="muted">No loans for this member.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

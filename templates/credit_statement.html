@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}Credit Statement{% endblock %}
+
+{% block content %}
+<div class="page-header no-print">
+    <div>
+        <h2>Credit Statement</h2>
+        <p class="page-subtitle">Money in transactions (Credit section only)</p>
+    </div>
+    <a href="{{ url_for('credit') }}" class="btn-secondary">Back</a>
+</div>
+
+<div class="page-tools no-print">
+    <form method="get"
+          action="{{ url_for('credit_statement') }}"
+          class="form-grid"
+          style="max-width: 520px;">
+        <div class="form-row">
+            <label>From Date
+                <input type="date" name="from_date"
+                       value="{{ from_date.isoformat() if from_date else '' }}">
+            </label>
+            <label>To Date
+                <input type="date" name="to_date"
+                       value="{{ to_date.isoformat() if to_date else '' }}">
+            </label>
+        </div>
+        <div class="form-row">
+            <label>Credit Head
+                <select name="credit_type">
+                    <option value="">All</option>
+                    {% for t in credit_types %}
+                        <option value="{{ t }}" {% if t == selected_credit_type %}selected{% endif %}>{{ t }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">Filter</button>
+            <button type="button" class="btn-secondary" onclick="window.print()">Print</button>
+        </div>
+    </form>
+</div>
+
+<div class="content-print-wrapper">
+    {% include "partials/print_header.html" %}
+
+    <div class="card table-card">
+        <h3>Credit Transactions</h3>
+        {% if credits %}
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Credit Head</th>
+                        <th>Account No</th>
+                        <th>Name</th>
+                        <th>Amount (₹)</th>
+                        <th>Mode</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in credits %}
+                    <tr>
+                        <td>{{ c.date.strftime('%d-%m-%Y') if c.date else '' }}</td>
+                        <td>{{ c.credit_type }}</td>
+                        <td>{{ c.account_no or '-' }}</td>
+                        <td>{{ c.name or '-' }}</td>
+                        <td class="amount-credit">{{ '%.2f'|format(c.amount) }}</td>
+                        <td>{{ c.mode or '-' }}</td>
+                        <td>{{ c.remarks or '-' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr class="total-row">
+                        <th colspan="4">Total Credit</th>
+                        <th>₹ {{ '%.2f'|format(total_amount or 0) }}</th>
+                        <th colspan="2"></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        {% else %}
+        <p class="muted">No credit transactions found for selected filters.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

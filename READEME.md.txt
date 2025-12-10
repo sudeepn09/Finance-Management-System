@@ -1,0 +1,62 @@
+# 🏦 Shri Guru Finance – Finance Management System (Flask)
+
+A full-featured finance management system designed for small-scale finance companies.  
+Built using **Flask, SQLite, HTML/CSS/JS**, and designed to manage loans, members, credits, debits, FD, RD, and statements.
+
+---
+
+## 🚀 Features
+
+### 🔹 Member Management
+- Create new members  
+- Update address/mobile  
+- Auto-generated account numbers  
+- SB account statement with running balance  
+
+### 🔹 Loan Management
+- Weekly, Monthly, Yearly & FD Loans  
+- Auto EMI calculation (interest + tenure)
+- Auto Start Date & End Date  
+- Prevent issuing new loan until old loan is closed  
+- Automatic mapping of EMI / Interest / Fine from Credit section  
+- Member Loan Statement with real-time outstanding amount  
+
+### 🔹 Credit & Debit Management
+- Auto-fill member name via Account No  
+- EMI, Interest, Fine automatically linked to loans  
+- Only SB Received / Member Closed mirrored to SB Statement  
+
+### 🔹 FD & RD Modules
+- Open / Close FD  
+- Open RD, record installments, and close  
+- Automatic maturity date & amount  
+
+### 🔹 Reporting
+- SB Statement with running balance  
+- Loan Statement  
+- Credit & Debit Statements  
+- Monthly reports (weekly category totals)  
+
+### 🎨 UI Features
+- Light/Dark mode  
+- Realtime date-time header  
+- Sidebar navigation  
+- Print-friendly pages  
+
+---
+
+## 🛠️ Tech Stack
+
+- **Backend:** Flask (Python)
+- **Database:** SQLite (guru_finance.db)
+- **Frontend:** HTML + CSS + Vanilla JS
+- **Deployment:** Can run on Render, Railway, PythonAnywhere, or Docker
+
+---
+
+## 📦 Installation & Setup
+
+### 1️⃣ Clone the Repository
+```bash
+git clone https://github.com/<your-username>/shri-guru-finance.git
+cd shri-guru-finance

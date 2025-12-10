@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block title %}Account Statement{% endblock %}
+
+{% block content %}
+<div class="page-header no-print">
+    <div>
+        <h2>Account Statement</h2>
+        <p class="page-subtitle">
+            Transaction history for Account No: {{ member.account_no }}
+        </p>
+    </div>
+    <button type="button" class="btn-secondary" onclick="window.history.back()">Back</button>
+</div>
+
+<div class="page-tools no-print">
+    <form method="get"
+          action="{{ url_for('statement') }}"
+          style="display:flex; gap:8px; align-items:center;">
+        <input type="text"
+               name="account_no"
+               value="{{ member.account_no }}"
+               placeholder="Account No"
+               style="max-width: 160px;">
+        <button type="submit" class="btn-secondary">Reload Statement</button>
+        <button type="button" class="btn-secondary" onclick="window.print()">Print</button>
+    </form>
+</div>
+
+<div class="content-print-wrapper">
+    {# SINGLE PRINT HEADER – common for all print pages #}
+    {% include "partials/print_header.html" %}
+
+    <!-- MEMBER INFO (just once on top of statement) -->
+    <div class="card account-details-card">
+        <div class="form-row">
+            <label>Account No
+                <input type="text" value="{{ member.account_no }}" readonly>
+            </label>
+            <label>Name
+                <input type="text" value="{{ member.name }}" readonly>
+            </label>
+        </div>
+        <div class="form-row">
+            <label>Mobile
+                <input type="text" value="{{ member.mobile or 'N/A' }}" readonly>
+            </label>
+            <label>Opening Balance
+                <input type="text"
+                       value="₹ {{ '%.2f'|format(opening_balance) }}"
+                       readonly>
+            </label>
+        </div>
+        <div class="form-row">
+            <label>Current Balance
+                <input type="text"
+                       value="₹ {{ '%.2f'|format(closing_balance) }}"
+                       readonly>
+            </label>
+        </div>
+    </div>
+
+    <!-- STATEMENT TABLE -->
+    <div class="card table-card">
+        <h3>SB Statement</h3>
+        {% if rows %}
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Particulars</th>
+                        <th>Debit (₹)</th>
+                        <th>Credit (₹)</th>
+                        <th>Available Balance (₹)</th>
+                        <th>Mode</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in rows %}
+                    <tr>
+                        <td>{{ r.date.strftime('%d-%m-%Y') }}</td>
+                        <td>{{ r.description }}</td>
+                        <td class="amount-debit">
+                            {% if r.debit and r.debit > 0 %}
+                                {{ '%.2f'|format(r.debit) }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td class="amount-credit">
+                            {% if r.credit and r.credit > 0 %}
+                                {{ '%.2f'|format(r.credit) }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ '%.2f'|format(r.balance) }}
+                        </td>
+                        <td>{{ r.mode or '-' }}</td>
+                        <td>{{ r.remarks or '-' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr class="total-row">
+                        <th colspan="2">Totals</th>
+                        <th>₹ {{ '%.2f'|format(total_debits) }}</th>
+                        <th>₹ {{ '%.2f'|format(total_credits) }}</th>
+                        <th>₹ {{ '%.2f'|format(closing_balance) }}</th>
+                        <th colspan="2"></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        {% else %}
+        <p class="muted">No transactions found for this account.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

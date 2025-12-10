@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Member Detail – Shri Guru Finance{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="page-title">
+        <h1>Member Detail</h1>
+        <span>Edit profile and view recent transactions</span>
+    </div>
+    <div class="no-print">
+        <a href="{{ url_for('member_list') }}" class="btn btn-outline">Back to Members</a>
+    </div>
+</div>
+
+<h3 style="font-size:0.9rem; margin-top:0.2rem; margin-bottom:0.4rem;">Profile</h3>
+
+<form method="post" class="no-print">
+    <div class="form-grid">
+        <div class="form-field">
+            <label>Account No</label>
+            <input type="text" value="{{ member['account_no'] }}" disabled>
+        </div>
+        <div class="form-field">
+            <label>Name</label>
+            <input type="text" name="name" value="{{ member['name'] }}" required>
+        </div>
+        <div class="form-field">
+            <label>Date of Birth</label>
+            <input type="date" name="dob" value="{{ member['dob'] or '' }}">
+        </div>
+        <div class="form-field">
+            <label>Mobile</label>
+            <input type="text" name="mobile" value="{{ member['mobile'] or '' }}">
+        </div>
+        <div class="form-field">
+            <label>PAN</label>
+            <input type="text" name="pan" value="{{ member['pan'] or '' }}">
+        </div>
+        <div class="form-field">
+            <label>Aadhar</label>
+            <input type="text" name="aadhar" value="{{ member['aadhar'] or '' }}">
+        </div>
+        <div class="form-field" style="grid-column: 1 / -1;">
+            <label>Address</label>
+            <textarea name="address" rows="2">{{ member['address'] or '' }}</textarea>
+        </div>
+    </div>
+
+    <div style="margin-top:0.8rem; display:flex; gap:0.5rem;">
+        <button type="submit" class="btn">Save Changes</button>
+        <a href="{{ url_for('member_list') }}" class="btn btn-outline">Back</a>
+    </div>
+</form>
+
+<h3 style="font-size:0.9rem; margin-top:1.1rem; margin-bottom:0.4rem;">Recent Transactions</h3>
+
+<div id="memberTxnSection" class="table-wrapper print-section">
+    {% include 'partials/print_header.html' %}
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for t in transactions %}
+            <tr>
+                <td>{{ t['txn_date'] }}</td>
+                <td>{{ t['type']|upper }}</td>
+                <td>₹ {{ '%.2f'|format(t['amount']) }}</td>
+                <td>{{ t['description'] or '' }}</td>
+            </tr>
+        {% else %}
+            <tr><td colspan="4">No transactions found.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="no-print" style="margin-top:0.5rem;">
+    <button class="btn btn-outline" onclick="printSection('memberTxnSection')">Print</button>
+</div>
+{% endblock %}

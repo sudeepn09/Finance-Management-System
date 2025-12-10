@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+
+# Virtual environment
+venv/
+env/
+
+# SQLite database
+guru_finance.db
+*.sqlite3
+
+# IDE/Editor files
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Environment variables
+.env
+*.env
+
+# Flask instance folder
+instance/

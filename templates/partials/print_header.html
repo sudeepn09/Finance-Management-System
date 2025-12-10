@@ -1,0 +1,15 @@
+{# templates/partials/print_header.html #}
+<div class="print-header">
+    <div class="ph-left">
+        <img src="{{ url_for('static', filename='images/logo.jpg') }}"
+             alt="Logo"
+             class="ph-logo-img">
+        <div class="ph-bank-lines">
+            <div class="ph-bank-name">Shri Guru Finance Corporation</div>
+            <div class="ph-branch">Bhainakwadi (Sadalga)</div>
+        </div>
+    </div>
+
+    {# This will be filled by JavaScript with live date & time #}
+    <div class="ph-datetime" id="print-datetime"></div>
+</div>

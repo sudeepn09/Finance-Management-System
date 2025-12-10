@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block title %}Monthly Report{% endblock %}
+
+{% block content %}
+
+{% include "partials/print_header.html" %}
+
+<div class="page-header">
+    <div>
+        <h2>Monthly Balance Sheet</h2>
+        <p class="page-subtitle">
+            {{ start_date.strftime('%d-%m-%Y') }} to {{ end_date.strftime('%d-%m-%Y') }}
+        </p>
+    </div>
+    <button type="button" class="btn-secondary no-print" onclick="window.history.back()">Back</button>
+</div>
+
+<div class="page-tools no-print">
+    <form method="post" class="form-grid" style="max-width: 420px;">
+        <div class="form-row">
+            <label>Month
+                <select name="month">
+                    {% for m in range(1, 13) %}
+                    <option value="{{ m }}" {% if m==month %}selected{% endif %}>
+                        {{ m }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>Year
+                <input type="number" name="year" value="{{ year }}">
+            </label>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">View Report</button>
+            <button type="button" class="btn-secondary" onclick="window.print()">Print</button>
+        </div>
+    </form>
+</div>
+
+<div class="card table-card report-table">
+    <h3>Debit (Out) Summary</h3>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Particulars</th>
+                    <th>Week 1</th>
+                    <th>Week 2</th>
+                    <th>Week 3</th>
+                    <th>Week 4</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for head in debit_heads %}
+                <tr>
+                    <td>{{ head }}</td>
+                    {% set weeks = debit_data[head] %}
+                    <td>₹ {{ '%.2f'|format(weeks[0]) }}</td>
+                    <td>₹ {{ '%.2f'|format(weeks[1]) }}</td>
+                    <td>₹ {{ '%.2f'|format(weeks[2]) }}</td>
+                    <td>₹ {{ '%.2f'|format(weeks[3]) }}</td>
+                    <td>₹ {{ '%.2f'|format(weeks[0]+weeks[1]+weeks[2]+weeks[3]) }}</td>
+                </tr>
+                {% endfor %}
+                <tr class="total-row">
+                    <td><strong>Total Debit</strong></td>
+                    <td>₹ {{ '%.2f'|format(weekly_debit_totals[0]) }}</td>
+                    <td>₹ {{ '%.2f'|format(weekly_debit_totals[1]) }}</td>
+                    <td>₹ {{ '%.2f'|format(weekly_debit_totals[2]) }}</td>
+                    <td>₹ {{ '%.2f'|format(weekly_debit_totals[3]) }}</td>
+                    <td>₹ {{ '%.2f'|format(total_debit) }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card table-card report-table">
+    <h3>Credit (In) Summary</h3>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Particulars</th>
+                    <th>Week 1</th>
+                    <th>Week 2</th>
+                    <th>Week 3</th>
+                    <th>Week 4</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for head in credit_heads %}
+                <tr>
+                    <td>{{ head }}</td>
+                    {% set weeks = credit_data[head] %}
+                    <td>₹ {{ '%.2f'|format(weeks[0]) }}</td>
+                    <td>₹ {{ '%.2f'|format(weeks[1]) }}</td>
+                    <td>₹ {{ '%.2f'|format(weeks[2]) }}</td>
+                    <td>₹ {{ '%.2f'|format(weeks[3]) }}</td>
+                    <td>₹ {{ '%.2f'|format(weeks[0]+weeks[1]+weeks[2]+weeks[3]) }}</td>
+                </tr>
+                {% endfor %}
+                <tr class="total-row">
+                    <td><strong>Total Credit</strong></td>
+                    <td>₹ {{ '%.2f'|format(weekly_credit_totals[0]) }}</td>
+                    <td>₹ {{ '%.2f'|format(weekly_credit_totals[1]) }}</td>
+                    <td>₹ {{ '%.2f'|format(weekly_credit_totals[2]) }}</td>
+                    <td>₹ {{ '%.2f'|format(weekly_credit_totals[3]) }}</td>
+                    <td>₹ {{ '%.2f'|format(total_credit) }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card">
+    <h3>Profit Summary</h3>
+    <div class="summary-row">
+        <div class="summary-card">
+            <span class="summary-label">Total Debit</span>
+            <span class="summary-value">₹ {{ '%.2f'|format(total_debit) }}</span>
+        </div>
+        <div class="summary-card">
+            <span class="summary-label">Total Credit</span>
+            <span class="summary-value">₹ {{ '%.2f'|format(total_credit) }}</span>
+        </div>
+        <div class="summary-card">
+            <span class="summary-label">Profit This Month</span>
+            <span class="summary-value">₹ {{ '%.2f'|format(profit_this_month) }}</span>
+        </div>
+        <div class="summary-card">
+            <span class="summary-label">Last Month Profit (placeholder)</span>
+            <span class="summary-value">₹ {{ '%.2f'|format(last_month_profit) }}</span>
+        </div>
+        <div class="summary-card">
+            <span class="summary-label">Total Profit (Till Now)</span>
+            <span class="summary-value">₹ {{ '%.2f'|format(cumulative_profit) }}</span>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

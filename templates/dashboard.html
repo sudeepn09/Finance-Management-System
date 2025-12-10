@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>Dashboard</h2>
+        <p class="page-subtitle">Key figures for Shri Guru Finance back-office</p>
+    </div>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <span class="stat-label">Total Members</span>
+        <span class="stat-value">{{ member_count }}</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-label">Active Loans</span>
+        <span class="stat-value">{{ loan_count }}</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-label">Total Credit</span>
+        <span class="stat-value">₹ {{ "%.2f"|format(total_credit) }}</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-label">Total Debit</span>
+        <span class="stat-value">₹ {{ "%.2f"|format(total_debit) }}</span>
+    </div>
+</div>
+{% endblock %}
+
+

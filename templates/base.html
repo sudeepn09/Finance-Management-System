@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="utf-8">
+    <title>Shri Guru Finance - {% block title %}{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- MAIN CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    {% block extra_css %}{% endblock %}
+
+    <!-- MAIN JS -->
+    <script defer src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</head>
+<body>
+
+<!-- ================= PROJECT TOP HEADER (fixed) ================= -->
+<header class="project-top-header no-print">
+    <div class="pth-left">
+        <img src="{{ url_for('static', filename='images/logo.jpg') }}"
+             alt="Logo"
+             class="pth-logo">
+        <div class="pth-text">
+            <div class="pth-name">Shri Guru Finance Corporation</div>
+            <div class="pth-branch">Bhainakwadi (Sadalga)</div>
+        </div>
+    </div>
+
+    <div class="pth-right">
+        <span id="realtime-clock" class="realtime-clock"></span>
+    </div>
+</header>
+<!-- ============================================================= -->
+
+<div class="page-wrapper">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-circle">
+                SG
+                {# If you prefer logo instead of "SG", uncomment:
+                <img src="{{ url_for('static', filename='images/logo.jpg') }}"
+                     alt="Logo" class="sidebar-logo-img">
+                #}
+            </div>
+            <div class="bank-mini">
+                <div class="bank-name-small">Shri Guru Finance Corporation</div>
+                <div class="bank-location">Bhainakwadi (Sadalga)</div>
+            </div>
+        </div>
+
+        <nav class="sidebar-menu">
+            <a href="{{ url_for('dashboard') }}"
+               class="menu-item {% if request.endpoint == 'dashboard' %}active{% endif %}">
+                Dashboard
+            </a>
+            <a href="{{ url_for('create_account') }}"
+               class="menu-item {% if request.endpoint == 'create_account' %}active{% endif %}">
+                Create Account
+            </a>
+            <a href="{{ url_for('loan') }}"
+               class="menu-item {% if request.endpoint == 'loan' %}active{% endif %}">
+                Loan
+            </a>
+            <a href="{{ url_for('debit') }}"
+               class="menu-item {% if request.endpoint == 'debit' %}active{% endif %}">
+                Debit
+            </a>
+            <a href="{{ url_for('credit') }}"
+               class="menu-item {% if request.endpoint == 'credit' %}active{% endif %}">
+                Credit
+            </a>
+            <a href="{{ url_for('member') }}"
+               class="menu-item {% if request.endpoint == 'member' %}active{% endif %}">
+                Member
+            </a>
+            <a href="{{ url_for('misc') }}"
+               class="menu-item {% if request.endpoint == 'misc' %}active{% endif %}">
+                Miscellaneous
+            </a>
+            <a href="{{ url_for('fd') }}"
+               class="menu-item {% if request.endpoint == 'fd' %}active{% endif %}">
+                F.D
+            </a>
+            <a href="{{ url_for('rd') }}"
+               class="menu-item {% if request.endpoint == 'rd' %}active{% endif %}">
+                R.D
+            </a>
+            <a href="{{ url_for('monthly_report') }}"
+               class="menu-item {% if request.endpoint == 'monthly_report' %}active{% endif %}">
+                Monthly Report
+            </a>
+            <a href="{{ url_for('settings') }}"
+               class="menu-item {% if request.endpoint == 'settings' %}active{% endif %}">
+                Settings
+            </a>
+
+            <a href="{{ url_for('logout') }}" class="menu-item logout-item">
+                Logout
+            </a>
+        </nav>
+    </aside>
+
+    <div id="sidebar-backdrop" class="sidebar-backdrop hidden"></div>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <!-- APP TOPBAR (search + profile) -->
+        <header class="topbar">
+            <div style="display:flex;align-items:center;gap:8px;">
+                <button class="icon-button menu-button" id="sidebar-toggle" type="button">
+                    ☰
+                </button>
+
+                <form id="global-search-form" class="search-bar" autocomplete="off">
+                    <input id="global-search-input" type="text" placeholder="Search Account / Mobile No">
+                    <button type="submit">Search</button>
+                </form>
+
+                <span class="topbar-bank-name">
+                    Shri Guru Finance Corporation Bhainakwadi (Sadalga)
+                </span>
+            </div>
+
+            <div class="topbar-actions">
+                <!-- Theme toggle -->
+                <button id="theme-toggle" class="icon-button" type="button" title="Toggle theme">
+                    <span class="icon-sun">☀</span>
+                    <span class="icon-moon">🌙</span>
+                </button>
+
+                <!-- Profile -->
+                <div class="profile-menu">
+                    <button class="icon-button profile-avatar" type="button">
+                        {{ session.get('username', 'AD')[0]|upper }}
+                    </button>
+                    <div class="profile-dropdown">
+                        <div class="profile-name">
+                            {{ session.get('username', 'Admin') }}
+                        </div>
+                        <a href="{{ url_for('settings') }}">Settings</a>
+                        <a href="{{ url_for('logout') }}" class="logout-link">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN PAGE CONTENT -->
+        <div class="content-wrapper fade-in">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="flash-container">
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+</div>
+
+<!-- PRINT FOOTER – for page number -->
+<div class="print-footer print-only"></div>
+
+<!-- GLOBAL SEARCH MODAL -->
+<div id="search-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h3>Member Search</h3>
+            <button type="button" class="icon-button" id="search-modal-close">✕</button>
+        </div>
+        <div class="modal-body" id="search-modal-body">
+            <!-- Filled by JS -->
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-secondary" id="search-modal-close-2">Close</button>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
