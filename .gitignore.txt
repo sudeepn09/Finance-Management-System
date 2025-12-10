@@ -25,3 +25,7 @@ guru_finance.db
 
 # Flask instance folder
 instance/
+
+instance/*.db
+instance/*.sqlite3
+
