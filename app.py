@@ -19,8 +19,19 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "change-this-secret-key"
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///guru_finance.db"
+
+# ✅ MySQL configuration (root user)
+# CHANGE password and database name if needed
+app.config["SQLALCHEMY_DATABASE_URI"] = (
+    "mysql+pymysql://root:#Sudeep7760@localhost:3306/guru_finance"
+)
+
+# ✅ Required for MySQL stability
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+    "pool_pre_ping": True,
+    "pool_recycle": 280,
+}
 
 db = SQLAlchemy(app)
 

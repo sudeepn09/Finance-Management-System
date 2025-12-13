@@ -5,4 +5,9 @@ WTForms==3.1.2
 email-validator==2.2.0
 Werkzeug==3.0.3
 
+# MySQL support
+pymysql==1.1.1
+cryptography==42.0.8
 
+# Production server (Render)
+gunicorn==22.0.0
